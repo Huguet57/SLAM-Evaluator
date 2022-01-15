@@ -1,0 +1,6 @@
+<launch>
+    <arg name="path" default="/media/andreu/Black\ Hard\ Drive/rosbags" />
+    <arg name="bagname" default="kitti_2011_09_26_drive_0035_synced.bag" />
+
+    <node pkg="rosbag" type="play" name="player" args="$(arg path)/$(arg bagname)"/>
+</launch>
