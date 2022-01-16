@@ -15,7 +15,7 @@
     <!-- Recorder -->
     <include file="$(find slam_evaluator)/launch/modules/recorder.launch">
         <arg name="filename" default="$(arg runname)" />
-        <arg name="commit" default="$(arg commit)" />
         <arg name="algorithm" default="limovelo" />
+        <arg name="commit" default="$(arg commit)" />
     </include>
 </launch>
