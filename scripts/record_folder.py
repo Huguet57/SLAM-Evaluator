@@ -13,7 +13,7 @@ for file in BAGS_FOLDER:
     if file.endswith(".bag"):
         print(f"PLAYING BAG: {file}")
 
-        cli_args = [LAUNCH_FILE, f'runname:={file[:-4]}']
+        cli_args = [LAUNCH_FILE, f'runname:={file[:-4]}', f'bagfolder:={rospy.get_param("/record_folder/bagfolder")}']
         roslaunch_args = cli_args[1:]
         roslaunch_file = [(roslaunch.rlutil.resolve_launch_arguments(cli_args)[0], roslaunch_args)]
 

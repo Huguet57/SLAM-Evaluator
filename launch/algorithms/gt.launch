@@ -1,10 +1,10 @@
 <launch>
-    <arg name="folder" default="28" />
+    <arg name="bagfolder" default="28" />
     <arg name="runname" default="kitti_2011_09_26_drive_0035_synced" />
 
     <!-- Player -->
     <include file="$(find slam_evaluator)/launch/modules/player.launch">
-        <arg name="bagname" value="$(arg folder)/$(arg runname).bag" />
+        <arg name="bagname" value="$(arg bagfolder)/$(arg runname).bag" />
         <arg name="required" value="true" />
     </include>
     

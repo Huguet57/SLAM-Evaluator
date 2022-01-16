@@ -1,6 +1,7 @@
 <launch>
-    <arg name="folder" default="28" />
+    <arg name="bagfolder" default="28" />
     <arg name="runname" default="kitti_2011_09_26_drive_0035_synced" />
+    <arg name="commit" default="." />
 
     <!-- Algorithm -->
     <rosparam command="load" file="$(find limovelo)/config/kitti.yaml" />
@@ -8,12 +9,13 @@
     
     <!-- Player -->
     <include file="$(find slam_evaluator)/launch/modules/player.launch">
-        <arg name="bagname" value="$(arg folder)/$(arg runname).bag" />
+        <arg name="bagname" value="$(arg bagfolder)/$(arg runname).bag" />
     </include>
     
     <!-- Recorder -->
     <include file="$(find slam_evaluator)/launch/modules/recorder.launch">
         <arg name="filename" default="$(arg runname)" />
+        <arg name="commit" default="$(arg commit)" />
         <arg name="algorithm" default="limovelo" />
     </include>
 </launch>
