@@ -1,0 +1,6 @@
+odom_topic: "/limovelo/state"
+end_topic: "/limovelo/end"
+gt_topic: "/NO_GT"
+directory: "/media/andreu/Movies/ws_limovelo/src/slam_evaluator/data/limovelo/"
+filename: $(arg filename)
+extension: ".csv"

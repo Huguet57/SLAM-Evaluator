@@ -1,0 +1,19 @@
+<launch>
+    <arg name="folder" default="28" />
+    <arg name="runname" default="kitti_2011_09_26_drive_0035_synced" />
+
+    <!-- Algorithm -->
+    <rosparam command="load" file="$(find fastlio)/config/kitti.yaml" />
+    <node pkg="fastlio" type="fastlio" name="fastlio" required="true" />
+    
+    <!-- Player -->
+    <include file="$(find slam_evaluator)/launch/modules/player.launch">
+        <arg name="bagname" value="$(arg folder)/$(arg runname).bag" />
+    </include>
+    
+    <!-- Recorder -->
+    <include file="$(find slam_evaluator)/launch/modules/recorder.launch">
+        <arg name="filename" default="$(arg runname)" />
+        <arg name="algorithm" default="fastlio" />
+    </include>
+</launch>

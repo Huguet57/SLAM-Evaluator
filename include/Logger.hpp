@@ -1,5 +1,5 @@
 struct LoggerParams {
-    std::string odom_topic, end_topic, directory, filename, extension;
+    std::string odom_topic, end_topic, gt_topic, world_frame_id, directory, filename, extension;
 };
 
 class Logger {
@@ -11,6 +11,7 @@ class Logger {
             this->interpret_parameters();
             this->subscribe_to_odom(nh);
             this->subscribe_to_ended(nh);
+            this->subscribe_to_gt(nh);
         }
 
         int n_odoms() {
@@ -39,6 +40,7 @@ class Logger {
     private:
         ros::Subscriber odom_sub;
         ros::Subscriber end_sub;
+        ros::Subscriber gt_sub;
 
         bool has_ended = false;
         std::vector<nav_msgs::Odometry> odoms;
@@ -50,9 +52,14 @@ class Logger {
         void subscribe_to_odom(ros::NodeHandle& nh) { this->odom_sub = nh.subscribe(params.odom_topic, 1000, &Logger::callback_odom, this); }
         void callback_odom(const nav_msgs::Odometry::ConstPtr& tf) { this->add_odom(*tf); }
 
+        void subscribe_to_gt(ros::NodeHandle& nh) { this->gt_sub = nh.subscribe(params.gt_topic, 1000, &Logger::callback_tf, this); }
+        void callback_tf(const tf2_msgs::TFMessage::ConstPtr& msg) { for (nav_msgs::Odometry odom : this->get_odoms_for_frame(msg, params.world_frame_id)) this->add_odom(odom); }
+
         void fill_parameters(ros::NodeHandle& nh) {
             nh.param<std::string>("odom_topic", params.odom_topic, "/algorithm/state");
             nh.param<std::string>("end_topic", params.end_topic, "/algorithm/end");
+            nh.param<std::string>("gt_topic", params.gt_topic, "/tf");
+            nh.param<std::string>("world_frame_id", params.world_frame_id, "world");
             nh.param<std::string>("directory", params.directory, "/path/to/data/");
             nh.param<std::string>("filename", params.filename, "new_commit");
             nh.param<std::string>("extension", params.extension, ".csv");
@@ -74,5 +81,35 @@ class Logger {
                         << odom.pose.pose.orientation.z << ","
                         << odom.pose.pose.orientation.w << std::endl;
             }
+        }
+
+        std::vector<nav_msgs::Odometry> get_odoms_for_frame(const tf2_msgs::TFMessage::ConstPtr& msg, const std::string& world_frame) {
+            std::vector<nav_msgs::Odometry> res;
+
+            for (auto tf : msg->transforms)
+                if (tf.header.frame_id == world_frame)
+                    res.push_back(this->tf_to_odom(tf));
+
+            return res;
+        }
+
+        nav_msgs::Odometry tf_to_odom(const geometry_msgs::TransformStamped& tf) {
+            nav_msgs::Odometry msg;
+            msg.header = tf.header;
+
+            auto t = tf.transform.translation;
+            Eigen::Vector3d tnow(t.x, t.y, t.z);
+            msg.pose.pose.position.x = tnow.x();
+            msg.pose.pose.position.y = tnow.y();
+            msg.pose.pose.position.z = tnow.z();
+
+            auto q = tf.transform.rotation;
+            Eigen::Quaterniond qnow(q.w, q.x, q.y, q.z);
+            msg.pose.pose.orientation.x = qnow.x();
+            msg.pose.pose.orientation.y = qnow.y();
+            msg.pose.pose.orientation.z = qnow.z();
+            msg.pose.pose.orientation.w = qnow.w();
+            
+            return msg;
         }
 };

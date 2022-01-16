@@ -1,0 +1,7 @@
+<launch>
+    <arg name="filename" default="newest" />
+    <arg name="algorithm" default="gt" />
+
+    <rosparam command="load" file="$(find slam_evaluator)/config/$(arg algorithm).yaml" subst_value="true" />
+    <node pkg="slam_evaluator" type="recorder" name="recorder" output="screen" />
+</launch>

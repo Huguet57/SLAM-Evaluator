@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 import os
 import roslaunch
 import rospy
 
-BAGS_FOLDER = os.listdir("/media/andreu/Black Hard Drive/rosbags/")
-LAUNCH_FILE = "/media/andreu/Movies/ws_limovelo/src/slam_evaluator/launch/record_bag.launch"
+BAGS_FOLDER = os.listdir(f"{rospy.get_param('/record_folder/bagpath')}/{rospy.get_param('/record_folder/bagfolder')}/")
+LAUNCH_FILE = f"{rospy.get_param('/record_folder/launchpath')}/{rospy.get_param('/record_folder/algorithm')}.launch"
 
 uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
 roslaunch.configure_logging(uuid)

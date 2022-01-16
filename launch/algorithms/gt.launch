@@ -1,0 +1,16 @@
+<launch>
+    <arg name="folder" default="28" />
+    <arg name="runname" default="kitti_2011_09_26_drive_0035_synced" />
+
+    <!-- Player -->
+    <include file="$(find slam_evaluator)/launch/modules/player.launch">
+        <arg name="bagname" value="$(arg folder)/$(arg runname).bag" />
+        <arg name="required" value="true" />
+    </include>
+    
+    <!-- Recorder -->
+    <include file="$(find slam_evaluator)/launch/modules/recorder.launch">
+        <arg name="filename" default="$(arg runname)" />
+        <arg name="algorithm" default="gt" />
+    </include>
+</launch>

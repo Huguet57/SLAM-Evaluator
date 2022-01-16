@@ -1,4 +1,5 @@
 <launch>
+    <arg name="folder" default="28" />
     <arg name="runname" default="kitti_2011_09_26_drive_0035_synced" />
 
     <!-- Algorithm -->
@@ -6,12 +7,13 @@
     <node pkg="limovelo" type="limovelo" name="limovelo" required="true" />
     
     <!-- Player -->
-    <include file="$(find slam_evaluator)/launch/player.launch">
-        <arg name="bagname" value="$(arg runname).bag" />
+    <include file="$(find slam_evaluator)/launch/modules/player.launch">
+        <arg name="bagname" value="$(arg folder)/$(arg runname).bag" />
     </include>
     
     <!-- Recorder -->
-    <include file="$(find slam_evaluator)/launch/recorder.launch">
+    <include file="$(find slam_evaluator)/launch/modules/recorder.launch">
         <arg name="filename" default="$(arg runname)" />
+        <arg name="algorithm" default="limovelo" />
     </include>
 </launch>

@@ -1,0 +1,17 @@
+<launch>
+    <!-- Absolute paths -->
+    <arg name="launchpath" default="/media/andreu/Movies/ws_limovelo/src/slam_evaluator/launch/algorithms" />
+    <arg name="bagpath" default="/media/andreu/Black Hard Drive/rosbags" />
+    
+    <!-- Folder + Algorithm -->
+    <arg name="bagfolder" default="28" />
+    <arg name="algorithm" default="gt" />
+
+    <node pkg="slam_evaluator" name="record_folder" type="record_folder.py" output="screen">
+        <param name="bagpath" value="$(arg bagpath)" />
+        <param name="bagfolder" value="$(arg bagfolder)" />
+
+        <param name="launchpath" value="$(arg launchpath)" />
+        <param name="algorithm" value="$(arg algorithm)" />
+    </node>
+</launch>

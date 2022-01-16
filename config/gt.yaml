@@ -1,0 +1,7 @@
+odom_topic: "/NO_ALGORITHM"
+end_topic: "/NO_END"
+gt_topic: "/tf"
+world_frame_id: "world"
+directory: "/media/andreu/Movies/ws_limovelo/src/slam_evaluator/data/gt/"
+filename: $(arg filename)
+extension: ".csv"
