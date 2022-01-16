@@ -1,19 +1,23 @@
 <launch>
     <arg name="bagfolder" default="28" />
     <arg name="runname" default="kitti_2011_09_26_drive_0035_synced" />
+    <arg name="commit" default="." />
 
     <!-- Algorithm -->
-    <rosparam command="load" file="$(find fastlio)/config/kitti.yaml" />
-    <node pkg="fastlio" type="fastlio" name="fastlio" required="true" />
+    <rosparam command="load" file="$(find fast_lio)/config/kitti.yaml" />
+    <node pkg="fast_lio" type="fastlio_mapping" name="fast_lio" required="true" />
     
     <!-- Player -->
     <include file="$(find slam_evaluator)/launch/modules/player.launch">
         <arg name="bagname" value="$(arg bagfolder)/$(arg runname).bag" />
+        <arg name="required" value="true" />
+        <arg name="r" value="0.5" />
     </include>
     
     <!-- Recorder -->
     <include file="$(find slam_evaluator)/launch/modules/recorder.launch">
         <arg name="filename" default="$(arg runname)" />
-        <arg name="algorithm" default="fastlio" />
+        <arg name="commit" default="$(arg commit)" />
+        <arg name="algorithm" default="fast_lio" />
     </include>
 </launch>
