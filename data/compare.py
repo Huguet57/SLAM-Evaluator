@@ -88,6 +88,7 @@ def interpret_meters(mts):
 def print_summary(name, summary, topN):
     betters, worses = summary
     total_mean, better_mean, worse_mean = calculate_means(summary)
+    worst_runs = {}
 
     betters = dict(sorted(betters.items(), key=lambda item: item[1][1]))
     worses = dict(sorted(worses.items(), key=lambda item: item[1][1], reverse=True))
@@ -114,27 +115,42 @@ def print_summary(name, summary, topN):
             print(end="\t\t\t")
             print(f"{key} ({interpret_meters(improvement[3])}): {interpret_improvement(improvement[1])}% ({interpret_improvement(improvement[0], True)}% abs.)")
 
+        if improvement[1] > 20: worst_runs[key] = improvement[1]
+
     print(f"\n\t\tMean unimprovement when is worse: {color.RED}+{round(worse_mean, 2)}%{color.END}")
     
     if total_mean < 0: print(f"\n\tTotal improvement vs. {color.BOLD}{name}{color.END}: {color.GREEN}{round(total_mean, 2)}%{color.END}\n")
     else: print(f"\n\tTotal unimprovement vs. {color.BOLD}{name}{color.END}: {color.RED}+{round(total_mean, 2)}%{color.END}\n")
 
-    return total_mean < 0
+    return total_mean < 0, worst_runs
+
+def print_possibilities(keys):
+    res = "Possibilities are: \n"
+    for key in keys:
+        res += f"\t{color.BLUE}{key}{color.END}\n"
+
+    print("\n"*2)
+    print(res)
+    print("\n"*2)
 
 # Program
 if __name__ == '__main__':
     commits = {}
-    import sys
-    new_commit = sys.argv[1]
-    if len(sys.argv) > 2: topN = int(sys.argv[2])
-    else: topN = 1e8
-
+    
     for file in os.listdir(DATA_FOLDER):
         if file.endswith(".csv"):
             results = pd.read_csv(os.path.join(DATA_FOLDER, file))
             commits[file[:-4]] = results
-
+            worst_runs = list(results.run)
+    
     successes = 0
+    worst_results = {}
+
+    import sys
+    if len(sys.argv) > 1: new_commit = sys.argv[1]
+    else: print_possibilities(commits.keys())
+    if len(sys.argv) > 2: topN = int(sys.argv[2])
+    else: topN = 1e8
 
     for name, old_commit in commits.items():
         old_commit = old_commit.sort_values(by=['run'])
@@ -146,6 +162,17 @@ if __name__ == '__main__':
             info = compare_run(old_values, commits[new_commit].iloc[run])
             add_info_to_summary(info, summary, old_values.run)
 
-        successes += print_summary(name, summary, topN)
+        success, worst_runs_commit = print_summary(name, summary, topN)
+        for run, result in worst_runs_commit.items():
+            if run in worst_results: worst_results[run].append(result)
+            else: worst_results[run] = [result]
+        worst_runs = list(set(worst_runs_commit.keys()) & set(worst_runs))
+        successes += success
 
-    print(f"Total successes: {color.GREEN}{successes}{color.END} and failures: {color.RED}{len(commits)-1-successes}{color.END}")
+    print(f"[{color.YELLOW}Possible drift{color.END}] {color.UNDERLINE}Shared{color.END} worst runs:")
+    for run in worst_runs:
+        print(f"\t{color.BOLD}{run}{color.END}:", end=" ")
+        for res in worst_results[run]: print(f"{interpret_improvement(res)}", end=" ")
+        print()
+
+    print(f"\nTotal successes: {color.GREEN}{successes}{color.END} and failures: {color.RED}{len(commits)-1-successes}{color.END}")
