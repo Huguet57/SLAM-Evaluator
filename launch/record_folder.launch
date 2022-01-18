@@ -1,6 +1,6 @@
 <launch>
     <!-- Absolute paths -->
-    <arg name="launchpath" default="/media/andreu/Movies/ws_limovelo/src/slam_evaluator/launch/algorithms" />
+    <arg name="launchpath" default="/media/andreu/Movies/ws_fastlio/src/SLAM-Evaluator/launch/algorithms" />
     <arg name="bagpath" default="/media/andreu/Black Hard Drive/rosbags" />
     
     <!-- Folder + Algorithm -->
