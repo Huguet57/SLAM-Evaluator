@@ -1,6 +1,6 @@
 odom_topic: "/Odometry"
 end_topic: "/NO_END"
 gt_topic: "/NO_GT"
-directory: "/media/andreu/Movies/ws_fastlio/src/SLAM-Evaluator/data/fast_lio/$(arg commit)/"
+directory: "/media/andreu/Movies/ws_fastlio/src/SLAM-Evaluator/data/commits/fast_lio/$(arg commit)/"
 filename: $(arg filename)
 extension: ".csv"

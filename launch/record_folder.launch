@@ -7,6 +7,7 @@
     <arg name="bagfolder" default="28" />
     <arg name="algorithm" default="gt" />
     <arg name="commit" default="." />
+    <arg name="bags" default="" />
 
     <node pkg="slam_evaluator" name="record_folder" type="record_folder.py" output="screen">
         <param name="bagpath" value="$(arg bagpath)" />
@@ -15,5 +16,6 @@
         <param name="launchpath" value="$(arg launchpath)" />
         <param name="algorithm" value="$(arg algorithm)" />
         <param name="commit" value="$(arg commit)" />
+        <param name="bags" value="$(arg bags)" />
     </node>
 </launch>
