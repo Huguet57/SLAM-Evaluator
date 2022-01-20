@@ -9,6 +9,8 @@ class Logger {
         Logger(ros::NodeHandle& nh) {
             this->fill_parameters(nh);
             this->interpret_parameters();
+            this->create_folder(params.directory);
+
             this->subscribe_to_odom(nh);
             this->subscribe_to_ended(nh);
             this->subscribe_to_gt(nh);
@@ -26,7 +28,7 @@ class Logger {
             odom_file.close();
 
             // Confirmation
-            std::cout << "Saved in: " << this->path_to_save << std::endl;
+            ROS_WARN("Saved in: %s", this->path_to_save.c_str());
         }
 
         bool ended() {
@@ -67,6 +69,13 @@ class Logger {
 
         void interpret_parameters() {
             this->path_to_save = params.directory + params.filename + params.extension;
+        }
+
+        void create_folder(std::string path_to_folder){
+            if (not std::filesystem::is_directory(path_to_folder) or not std::filesystem::exists(path_to_folder)) {
+                std::filesystem::create_directory(path_to_folder);
+                ROS_WARN("Created folder: %s", path_to_folder.c_str());
+            }   
         }
 
         void odoms_to_file(std::ofstream& odom_file, const std::vector<nav_msgs::Odometry>& odoms) {
